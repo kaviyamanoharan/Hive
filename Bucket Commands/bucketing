@@ -1,0 +1,139 @@
+[training@localhost ~]$ hive
+Logging initialized using configuration in file:/etc/hive/conf.dist/hive-log4j.properties
+Hive history file=/tmp/training/hive_job_log_training_202302150240_1654521801.txt
+hive> select count * from user_ratings;
+FAILED: ParseException line 1:15 cannot recognize input near 'from' 'user_ratings' '<EOF>' in expression specification
+
+hive> select count (*) from user_ratings;
+Total MapReduce jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks determined at compile time: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapred.reduce.tasks=<number>
+Starting Job = job_202302150550_0002, Tracking URL = http://0.0.0.0:50030/jobdetails.jsp?jobid=job_202302150550_0002
+Kill Command = /usr/lib/hadoop/bin/hadoop job  -Dmapred.job.tracker=0.0.0.0:8021 -kill job_202302150550_0002
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 1
+2023-02-15 02:41:01,647 Stage-1 map = 0%,  reduce = 0%
+2023-02-15 02:41:05,697 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 1.73 sec
+2023-02-15 02:41:06,709 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 1.73 sec
+2023-02-15 02:41:07,729 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 1.73 sec
+2023-02-15 02:41:08,756 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 1.73 sec
+2023-02-15 02:41:09,773 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 3.91 sec
+2023-02-15 02:41:10,794 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 3.91 sec
+2023-02-15 02:41:11,812 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 3.91 sec
+MapReduce Total cumulative CPU time: 3 seconds 910 msec
+Ended Job = job_202302150550_0002
+MapReduce Jobs Launched: 
+Job 0: Map: 1  Reduce: 1   Cumulative CPU: 3.91 sec   HDFS Read: 0 HDFS Write: 0 SUCCESS
+Total MapReduce CPU Time Spent: 3 seconds 910 msec
+OK
+100000
+Time taken: 19.684 seconds
+hive> create table rating_buckets (userid INT ,movieid INT,rating INT,unixtime INT)
+    > clustered by (movie id ) into 8 buckets;
+FAILED: ParseException line 2:20 mismatched input 'id' expecting ) near 'movie' in table buckets specification
+
+hive> create table rating_buckets (userid INT ,movieid INT,rating INT,unixtime INT)
+    > clustered by (movieid ) into 8 buckets;                                      
+OK
+Time taken: 0.41 seconds
+hive> set hive.enforce.bucketing=true;
+hive> insert overwrite table rating_buckets select * from user_ratings cluster by movieid;
+Total MapReduce jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks determined at compile time: 8
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapred.reduce.tasks=<number>
+Starting Job = job_202302150550_0003, Tracking URL = http://0.0.0.0:50030/jobdetails.jsp?jobid=job_202302150550_0003
+Kill Command = /usr/lib/hadoop/bin/hadoop job  -Dmapred.job.tracker=0.0.0.0:8021 -kill job_202302150550_0003
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 8
+2023-02-15 02:51:49,414 Stage-1 map = 0%,  reduce = 0%
+2023-02-15 02:51:52,443 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 2.62 sec
+2023-02-15 02:51:53,465 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 2.62 sec
+2023-02-15 02:51:54,473 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 2.62 sec
+2023-02-15 02:51:55,481 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 2.62 sec
+2023-02-15 02:51:56,489 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 2.62 sec
+2023-02-15 02:51:57,511 Stage-1 map = 100%,  reduce = 13%, Cumulative CPU 6.2 sec
+2023-02-15 02:51:58,528 Stage-1 map = 100%,  reduce = 25%, Cumulative CPU 10.06 sec
+2023-02-15 02:51:59,537 Stage-1 map = 100%,  reduce = 25%, Cumulative CPU 10.06 sec
+2023-02-15 02:52:00,549 Stage-1 map = 100%,  reduce = 25%, Cumulative CPU 10.06 sec
+2023-02-15 02:52:01,559 Stage-1 map = 100%,  reduce = 25%, Cumulative CPU 10.06 sec
+2023-02-15 02:52:02,570 Stage-1 map = 100%,  reduce = 50%, Cumulative CPU 17.52 sec
+2023-02-15 02:52:03,588 Stage-1 map = 100%,  reduce = 50%, Cumulative CPU 17.52 sec
+2023-02-15 02:52:04,600 Stage-1 map = 100%,  reduce = 50%, Cumulative CPU 17.52 sec
+2023-02-15 02:52:05,611 Stage-1 map = 100%,  reduce = 50%, Cumulative CPU 17.52 sec
+2023-02-15 02:52:06,622 Stage-1 map = 100%,  reduce = 63%, Cumulative CPU 21.23 sec
+2023-02-15 02:52:07,637 Stage-1 map = 100%,  reduce = 75%, Cumulative CPU 24.84 sec
+2023-02-15 02:52:08,647 Stage-1 map = 100%,  reduce = 75%, Cumulative CPU 24.84 sec
+2023-02-15 02:52:09,656 Stage-1 map = 100%,  reduce = 75%, Cumulative CPU 24.84 sec
+2023-02-15 02:52:10,667 Stage-1 map = 100%,  reduce = 75%, Cumulative CPU 24.84 sec
+2023-02-15 02:52:11,677 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 32.19 sec
+2023-02-15 02:52:12,686 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 32.19 sec
+2023-02-15 02:52:13,719 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 32.19 sec
+MapReduce Total cumulative CPU time: 32 seconds 190 msec
+Ended Job = job_202302150550_0003
+Loading data to table default.rating_buckets
+rmr: DEPRECATED: Please use 'rm -r' instead.
+Deleted /user/hive/warehouse/rating_buckets
+100000 Rows loaded to rating_buckets
+MapReduce Jobs Launched: 
+Job 0: Map: 1  Reduce: 8   Cumulative CPU: 32.19 sec   HDFS Read: 0 HDFS Write: 0 SUCCESS
+Total MapReduce CPU Time Spent: 32 seconds 190 msec
+OK
+Time taken: 30.52 seconds
+hive> select * from user limit 5;
+FAILED: SemanticException [Error 10001]: Line 1:14 Table not found 'user'
+hive> select * from movies_part where genre ='comedy' limit 5;
+OK
+2	GoldenEye (1995)	01-Jan-1995	http://us.imdb.com/M/title-exact?GoldenEye%20(1995)	comedy
+4	Get Shorty (1995)	01-Jan-1995	http://us.imdb.com/M/title-exact?Get%20Shorty%20(1995)	comedy
+17	From Dusk Till Dawn (1996)	05-Feb-1996	http://us.imdb.com/M/title-exact?From%20Dusk%20Till%20Dawn%20(1996)	comedy
+21	Muppet Treasure Island (1996)	16-Feb-1996	http://us.imdb.com/M/title-exact?Muppet%20Treasure%20Island%20(1996)comedy
+22	Braveheart (1995)	16-Feb-1996	http://us.imdb.com/M/title-exact?Braveheart%20(1995)	comedy
+Time taken: 0.399 seconds
+hive> describe movies_part;
+OK
+movieid	int	
+movie_name	string	
+release_data	string	
+imdb_url	string	
+genre	string	
+Time taken: 0.142 seconds
+hive> select movieid,lower(movie
+    > ;    
+FAILED: ParseException line 1:21 mismatched input '<EOF>' expecting ) near 'movie' in function specification
+
+hive> select movieid,lower(movie_name) from movies_part where genre='comedy' limit 5;
+Total MapReduce jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks is set to 0 since there's no reduce operator
+Starting Job = job_202302150550_0004, Tracking URL = http://0.0.0.0:50030/jobdetails.jsp?jobid=job_202302150550_0004
+Kill Command = /usr/lib/hadoop/bin/hadoop job  -Dmapred.job.tracker=0.0.0.0:8021 -kill job_202302150550_0004
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 0
+2023-02-15 03:16:22,643 Stage-1 map = 0%,  reduce = 0%
+2023-02-15 03:16:25,660 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 1.2 sec
+2023-02-15 03:16:26,665 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 1.2 sec
+2023-02-15 03:16:27,685 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 1.2 sec
+MapReduce Total cumulative CPU time: 1 seconds 200 msec
+Ended Job = job_202302150550_0004
+MapReduce Jobs Launched: 
+Job 0: Map: 1   Cumulative CPU: 1.2 sec   HDFS Read: 0 HDFS Write: 0 SUCCESS
+Total MapReduce CPU Time Spent: 1 seconds 200 msec
+OK
+2	goldeneye (1995)
+4	get shorty (1995)
+17	from dusk till dawn (1996)
+21	muppet treasure island (1996)
+22	braveheart (1995)
+Time taken: 9.468 seconds
+hive> list jar;
+file:/usr/lib/hive/lib/hive-builtins-0.9.0-cdh4.1.1.jar
+hive> 
